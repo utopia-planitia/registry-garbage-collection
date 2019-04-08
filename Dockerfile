@@ -12,5 +12,6 @@ FROM lachlanevenson/k8s-kubectl:v1.8.10 AS kubectl
 FROM alpine:3.7
 COPY --from=deckschrubber /go/bin/deckschrubber  /bin
 COPY --from=kubectl       /usr/local/bin/kubectl /bin
+RUN apk --update --no-cache add curl
 ENTRYPOINT ["deckschrubber"]
 CMD ["--help"]
