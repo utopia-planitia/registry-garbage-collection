@@ -7,7 +7,7 @@ RUN git checkout -b tag v0.6.0
 RUN go get .
 RUN go install .
 
-FROM lachlanevenson/k8s-kubectl:v1.13.5 AS kubectl
+FROM lachlanevenson/k8s-kubectl:v1.22.2@sha256:33329c939c44a6cebe58c510aa644fb501c14992d71af6670aa3beb22200d3ec AS kubectl
 
 FROM alpine:3.14.2@sha256:e1c082e3d3c45cccac829840a25941e679c25d438cc8412c2fa221cf1a824e6a
 COPY --from=deckschrubber /go/bin/deckschrubber  /bin
