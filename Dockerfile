@@ -1,11 +1,6 @@
-FROM golang:1.10.1-alpine3.7 AS deckschrubber
-RUN mkdir -p src/github.com/fraunhoferfokus/deckschrubber
-WORKDIR src/github.com/fraunhoferfokus/deckschrubber
+FROM golang:1.17.2-alpine AS deckschrubber
 RUN apk --update add git
-RUN git clone https://github.com/fraunhoferfokus/deckschrubber.git .
-RUN git checkout -b tag v0.6.0
-RUN go get .
-RUN go install .
+RUN go install github.com/fraunhoferfokus/deckschrubber@v0.7.0
 
 FROM lachlanevenson/k8s-kubectl:v1.22.2@sha256:33329c939c44a6cebe58c510aa644fb501c14992d71af6670aa3beb22200d3ec AS kubectl
 
