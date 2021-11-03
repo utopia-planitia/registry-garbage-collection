@@ -2,7 +2,7 @@ FROM golang:1.17.2-alpine@sha256:5519c8752f6b53fc8818dc46e9fda628c99c4e8fd2d2f1d
 RUN apk --update add git
 RUN go install github.com/fraunhoferfokus/deckschrubber@v0.7.0
 
-FROM lachlanevenson/k8s-kubectl:v1.22.2@sha256:33329c939c44a6cebe58c510aa644fb501c14992d71af6670aa3beb22200d3ec AS kubectl
+FROM lachlanevenson/k8s-kubectl:v1.22.3@sha256:5fab67a6cad3f539838ce58f1a5c6bc4e4b00c433b04ebbad483cc8c719e4afd AS kubectl
 
 FROM alpine:3.14.2@sha256:e1c082e3d3c45cccac829840a25941e679c25d438cc8412c2fa221cf1a824e6a
 COPY --from=deckschrubber /go/bin/deckschrubber  /bin
