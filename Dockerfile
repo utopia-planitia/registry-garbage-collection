@@ -4,7 +4,7 @@ RUN go install github.com/fraunhoferfokus/deckschrubber@v0.7.0
 
 FROM lachlanevenson/k8s-kubectl:v1.22.3@sha256:5fab67a6cad3f539838ce58f1a5c6bc4e4b00c433b04ebbad483cc8c719e4afd AS kubectl
 
-FROM alpine:3.14.2@sha256:e1c082e3d3c45cccac829840a25941e679c25d438cc8412c2fa221cf1a824e6a
+FROM alpine:3.14.3@sha256:230cdd0ecad7d678b69b033748ac07183a26115ab1050a5d464105eafbe57859
 COPY --from=deckschrubber /go/bin/deckschrubber  /bin
 COPY --from=kubectl       /usr/local/bin/kubectl /bin
 RUN apk --update --no-cache add curl
