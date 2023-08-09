@@ -1,4 +1,4 @@
-FROM golang:1.20.7-alpine@sha256:11e8b9326ee23669edc53e32209a8ba12120fb331086eed6227baa4ce314d369 AS deckschrubber
+FROM golang:1.20.7-alpine@sha256:03278bc16e1a5b4fb6cdd3462108c060aa1e9c2353ce4d15d744b3c40168677d AS deckschrubber
 RUN apk --update add git
 RUN go install github.com/fraunhoferfokus/deckschrubber@v0.7.0
 
