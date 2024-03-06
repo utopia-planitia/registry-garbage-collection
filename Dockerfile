@@ -1,12 +1,34 @@
-FROM golang:1.22.1-alpine@sha256:fc5e5848529786cf1136563452b33d713d5c60b2c787f6b2a077fa6eeefd9114 AS deckschrubber
-RUN apk --update add git
-RUN go install github.com/fraunhoferfokus/deckschrubber@v0.7.0
+FROM docker.io/library/golang:1.22.1-alpine@sha256:fc5e5848529786cf1136563452b33d713d5c60b2c787f6b2a077fa6eeefd9114 AS deckschrubber
 
-FROM lachlanevenson/k8s-kubectl:v1.25.4@sha256:af5cea3f2e40138df90660c0c073d8b1506fb76c8602a9f48aceb5f4fb052ddc AS kubectl
+# renovate: datasource=github-tags depName=kubernetes/kubernetes
+ENV KUBECTL_VERSION=v1.29.2
+# renovate: datasource=github-tags depName=fraunhoferfokus/deckschrubber
+ENV DECKSCHRUBBER_VERSION=v0.7.0
 
-FROM alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
-COPY --from=deckschrubber /go/bin/deckschrubber  /bin
-COPY --from=kubectl       /usr/local/bin/kubectl /bin
-RUN apk --update --no-cache add curl
-ENTRYPOINT ["deckschrubber"]
+ARG TARGETARCH
+ENV TARGETARCH=${TARGETARCH:?}
+
+RUN set -eux; \
+    apk upgrade --no-cache; \
+    # install deckschrubber
+    CGO_ENABLED=0 GOOS=linux go install "github.com/fraunhoferfokus/deckschrubber@${DECKSCHRUBBER_VERSION:?}"; \
+    /go/bin/deckschrubber -v | tee -a /dev/stderr | grep -Fq "${DECKSCHRUBBER_VERSION#v}"; \
+    # install kubectl
+    wget -qO /bin/kubectl "https://dl.k8s.io/release/${KUBECTL_VERSION:?}/bin/linux/${TARGETARCH:?}/kubectl"; \
+    chmod +x /bin/kubectl; \
+    /bin/kubectl version --client | tee -a /dev/stderr | grep -Fq "${KUBECTL_VERSION:?}"
+
+
+FROM docker.io/library/alpine:3.19.1@sha256:c5b1261d6d3e43071626931fc004f70149baeba2c8ec672bd4f27761f8e1ad6b
+
+COPY --from=deckschrubber /bin/kubectl /go/bin/deckschrubber /bin
+
+RUN set -eux; \
+    apk upgrade --no-cache; \
+    apk add --no-cache curl; \
+    addgroup -g 10001 deckschrubber; \
+    adduser -D -g deckschrubber -G deckschrubber -H -s /sbin/nologin -u 10001 deckschrubber
+
+USER 10001:10001
+ENTRYPOINT ["/bin/deckschrubber"]
 CMD ["--help"]
