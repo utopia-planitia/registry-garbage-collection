@@ -1,4 +1,4 @@
-FROM docker.io/library/golang:1.22.3-alpine@sha256:f1fe698725f6ed14eb944dc587591f134632ed47fc0732ec27c7642adbe90618 AS deckschrubber
+FROM docker.io/library/golang:1.22.3-alpine@sha256:769c0a3571477715d919360cd58b4300c47b1d9a868c072a6e16bd45cd1e49e6 AS deckschrubber
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
 ENV KUBECTL_VERSION=v1.29.2
